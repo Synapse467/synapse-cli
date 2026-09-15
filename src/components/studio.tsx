@@ -253,6 +253,12 @@ export function Studio({
       icon: ChartNoAxesCombined,
       active: section === "usage",
     },
+    {
+      label: "Organizations",
+      href: `${base}/organizations`,
+      icon: ShieldCheck,
+      active: section === "organizations",
+    },
   ];
   return (
     <div className="workspace">
@@ -643,6 +649,8 @@ export function Studio({
                 <Licenses w={w} mutate={mutate} />
               ) : section === "usage" ? (
                 <Usage w={w} />
+              ) : section === "organizations" ? (
+                <Organizations demo={demo} />
               ) : section === "profile" ? (
                 <Profile w={w} mutate={mutate} />
               ) : section === "explore" ? (
@@ -1041,6 +1049,24 @@ function Sources({
                       onClick={() => setView(s.id)}
                     >
                       <ArrowUpRight size={17} />
+                    </button>
+                    <button
+                      className="icon-button"
+                      aria-label={`Redact ${s.title}`}
+                      onClick={() =>
+                        mutate({ type: "redact-source", capsuleId: capsule.id, id: s.id })
+                      }
+                    >
+                      Redact
+                    </button>
+                    <button
+                      className="icon-button"
+                      aria-label={`Delete ${s.title}`}
+                      onClick={() =>
+                        mutate({ type: "delete-source", capsuleId: capsule.id, id: s.id })
+                      }
+                    >
+                      Delete
                     </button>
                   </td>
                 </tr>
@@ -2161,17 +2187,79 @@ function Usage({ w }: { w: Workspace }) {
           />
         )}
       </section>
-      <div className="surface settlement-surface">
-        <div>
-          <span className="eyebrow">SETTLEMENTS</span>
-          <h2>No payments to show yet.</h2>
-          <p>
-            Usage-based compensation requires a configured payment asset and
-            settlement policy. No payment is implied by a query count.
-          </p>
+      <section className="surface">
+        <div className="surface-heading">
+          <h2>Settlements</h2>
+          <span>{(w.settlements || []).length} records</span>
         </div>
-        <ShieldCheck size={35} strokeWidth={1} />
-      </div>
+        {(w.settlements || []).length ? (
+          <div className="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Ref</th>
+                  <th>Amount</th>
+                  <th>Asset</th>
+                  <th>Status</th>
+                  <th>On-chain</th>
+                </tr>
+              </thead>
+              <tbody>
+                {(w.settlements || []).map((s) => (
+                  <tr key={s.id}>
+                    <td>{s.settlementRef.slice(0, 8)}</td>
+                    <td>{s.amountMinor}</td>
+                    <td>{s.assetCode}</td>
+                    <td>{s.status}</td>
+                    <td>{s.stellarTxHash ? s.stellarTxHash.slice(0, 8) : "—"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p className="form-help">
+            Priced licenses settle as a split among contributors with Stellar
+            wallets. Free licenses never create a settlement. On-chain
+            settle_split is a proof of the split, not a bank transfer.
+          </p>
+        )}
+      </section>
+      <section className="surface">
+        <div className="surface-heading">
+          <h2>Usage receipts</h2>
+          <span>{(w.receipts || []).length} batches</span>
+        </div>
+        {(w.receipts || []).length ? (
+          <div className="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Events</th>
+                  <th>Manifest</th>
+                  <th>On-chain</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {(w.receipts || []).map((r) => (
+                  <tr key={r.id}>
+                    <td>{r.eventCount}</td>
+                    <td>{r.usageManifestHash.slice(0, 12)}</td>
+                    <td>{r.stellarTxHash ? r.stellarTxHash.slice(0, 8) : "queued"}</td>
+                    <td>{date(r.createdAt)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p className="form-help">
+            Licensed queries are batched into opaque usage receipts (ids and
+            unit counts only — never the question text).
+          </p>
+        )}
+      </section>
     </>
   );
 }
@@ -2183,6 +2271,12 @@ function Profile({ w, mutate }: { w: Workspace; mutate: Mutate }) {
           <span className="eyebrow">THE HUMAN BEHIND THE KNOWLEDGE</span>
           <h1>Your expert profile.</h1>
           <p>Give your contributions a name, a context, and a point of view.</p>
+          {w.profile.platformRole && w.profile.platformRole !== "NONE" && (
+            <p className="form-help">
+              Platform role: {w.profile.platformRole}. You can review pending
+              expert credentials at <code>GET /v1/experts/credentials</code>.
+            </p>
+          )}
         </div>
       </div>
       <div className="detail-grid">
@@ -2529,5 +2623,159 @@ export function Ask({
         </Modal>
       )}
     </div>
+  );
+}
+
+function Organizations({ demo }: { demo: boolean }) {
+  const [name, setName] = useState("");
+  const [invite, setInvite] = useState({ orgId: "", email: "", mfa: "" });
+  const [enroll, setEnroll] = useState<{
+    orgId: string;
+    uri: string;
+    secret: string;
+  } | null>(null);
+  const [notice, setNotice] = useState("");
+  const query = useQuery({
+    queryKey: ["organizations", demo],
+    queryFn: () => api<{ id: string; name: string }[]>("/organizations"),
+    enabled: !demo,
+  });
+  const orgs = query.data || [];
+  if (demo)
+    return (
+      <Empty
+        title="Organizations require the live API"
+        description="This labelled demo stays in the browser. Sign in to Studio to create an organization, enroll MFA, and invite members."
+      />
+    );
+  return (
+    <>
+      <div className="page-heading">
+        <div>
+          <span className="eyebrow">TEAMS</span>
+          <h1>Organizations</h1>
+          <p>
+            Create an organization, enroll TOTP MFA (required for admin
+            actions), then invite members.
+          </p>
+        </div>
+      </div>
+      {notice && <p className="form-help">{notice}</p>}
+      {query.error && (
+        <p className="form-help">{(query.error as Error).message}</p>
+      )}
+      <section className="surface">
+        <form
+          className="stack"
+          onSubmit={async (e) => {
+            e.preventDefault();
+            await api("/organizations", {
+              method: "POST",
+              body: JSON.stringify({ name }),
+            });
+            setName("");
+            await query.refetch();
+          }}
+        >
+          <label>
+            New organization
+            <input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              minLength={2}
+              required
+            />
+          </label>
+          <button className="button button-dark" type="submit">
+            Create
+          </button>
+        </form>
+      </section>
+      {orgs.map((org) => (
+        <section className="surface" key={org.id}>
+          <h2>{org.name}</h2>
+          <button
+            className="button button-outline"
+            onClick={async () => {
+              const result = await api<{ otpauthUri: string; secret: string }>(
+                `/organizations/${org.id}/mfa/enroll`,
+                { method: "POST" },
+              );
+              setEnroll({
+                orgId: org.id,
+                uri: result.otpauthUri,
+                secret: result.secret,
+              });
+            }}
+          >
+            Enroll MFA
+          </button>
+          {enroll?.orgId === org.id && (
+            <form
+              className="stack"
+              onSubmit={async (e) => {
+                e.preventDefault();
+                const form = e.currentTarget;
+                const code = (
+                  form.elements.namedItem("code") as HTMLInputElement
+                ).value;
+                await api(`/organizations/${org.id}/mfa/verify`, {
+                  method: "POST",
+                  body: JSON.stringify({ code }),
+                });
+                setEnroll(null);
+                setNotice("MFA verified for this organization.");
+              }}
+            >
+              <p className="form-help">
+                Add this secret to your authenticator: {enroll.secret}
+              </p>
+              <input name="code" placeholder="6-digit code" required />
+              <button className="button button-dark" type="submit">
+                Verify MFA
+              </button>
+            </form>
+          )}
+          <form
+            className="stack"
+            onSubmit={async (e) => {
+              e.preventDefault();
+              await api(`/organizations/${org.id}/members`, {
+                method: "POST",
+                body: JSON.stringify({
+                  email: invite.email,
+                  role: "MEMBER",
+                  mfaCode: invite.mfa,
+                }),
+              });
+              setInvite({ orgId: "", email: "", mfa: "" });
+              setNotice("Member invited.");
+            }}
+          >
+            <input
+              placeholder="colleague@example.test"
+              value={invite.orgId === org.id ? invite.email : ""}
+              onChange={(e) =>
+                setInvite({
+                  orgId: org.id,
+                  email: e.target.value,
+                  mfa: invite.mfa,
+                })
+              }
+            />
+            <input
+              placeholder="Current MFA code"
+              value={invite.orgId === org.id ? invite.mfa : ""}
+              onChange={(e) =>
+                setInvite({ ...invite, orgId: org.id, mfa: e.target.value })
+              }
+            />
+            <button className="button button-dark" type="submit">
+              Invite member
+            </button>
+          </form>
+        </section>
+      ))}
+    </>
   );
 }

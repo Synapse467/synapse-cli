@@ -75,14 +75,42 @@ export type Usage = {
   occurredAt: string;
   units: number;
 };
+export type Settlement = {
+  id: string;
+  settlementRef: string;
+  capsuleId: string;
+  contributorId: string;
+  amountMinor: number;
+  assetCode: string;
+  status: string;
+  stellarTxHash?: string | null;
+  createdAt: string;
+};
+export type Receipt = {
+  id: string;
+  capsuleId: string;
+  licenseId: string;
+  eventCount: number;
+  usageManifestHash: string;
+  stellarTxHash?: string | null;
+  createdAt: string;
+};
 export type Workspace = {
-  profile: { name: string; email: string; bio: string; domain: string };
+  profile: {
+    name: string;
+    email: string;
+    bio: string;
+    domain: string;
+    platformRole?: string;
+  };
   capsules: Capsule[];
   sources: Source[];
   knowledge: Knowledge[];
   licenses: License[];
   evaluations: Evaluation[];
   usage: Usage[];
+  settlements?: Settlement[];
+  receipts?: Receipt[];
 };
 export type Answer = {
   text: string;
@@ -284,6 +312,8 @@ export function seedWorkspace(): Workspace {
     ],
     evaluations: [],
     usage: [],
+    settlements: [],
+    receipts: [],
   };
 }
 export function loadDemo(): Workspace {
@@ -461,6 +491,16 @@ export function applyDemoAction(
   } else if (action.type === "revoke") {
     const license = w.licenses.find((l) => l.id === action.id);
     if (license) license.status = "REVOKED";
+  } else if (action.type === "redact-source") {
+    const source = w.sources.find((s) => s.id === action.id);
+    if (source)
+      source.text = source.text.replace(
+        /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/gi,
+        "[REDACTED]",
+      );
+  } else if (action.type === "delete-source") {
+    w.sources = w.sources.filter((s) => s.id !== action.id);
+    w.knowledge = w.knowledge.filter((k) => k.sourceId !== action.id);
   } else throw new Error("This action is unavailable in the preview.");
   return w;
 }
