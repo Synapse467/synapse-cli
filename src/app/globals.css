@@ -1,4 +1,4 @@
-@import "tailwindcss";
+﻿@import "tailwindcss";
 @theme inline {
   --color-mint: #9cf3cb;
   --color-ink: #14221f;
@@ -3757,6 +3757,36 @@ tr:last-child td {
   font-size: 9px;
   color: #a9ba99;
 }
+
+/* -- Wallet auth ---------------------------------------------------- */
+.wallet-auth-block { display: flex; flex-direction: column; gap: 12px; margin-top: 4px; }
+.button-wallet { display: flex; align-items: center; gap: 10px; padding: 14px 20px; background: linear-gradient(135deg, #1a2e14 0%, #2d4f20 60%, #3a6428 100%); color: #e8f5de; border: 1.5px solid #4a7a30; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; width: 100%; box-shadow: 0 4px 20px rgba(42,80,28,0.35); }
+.button-wallet:hover:not(:disabled) { background: linear-gradient(135deg, #223a1a 0%, #3a6428 60%, #4d8438 100%); transform: translateY(-1px); box-shadow: 0 6px 28px rgba(42,80,28,0.48); }
+.button-wallet:active:not(:disabled) { transform: translateY(0); }
+.button-wallet:disabled { opacity: 0.7; cursor: not-allowed; }
+.button-wallet svg:last-child { margin-left: auto; opacity: 0.7; }
+.wallet-badge { display: flex; align-items: center; gap: 8px; }
+.wallet-badge-pill { display: inline-flex; align-items: center; background: linear-gradient(90deg, #e8f5de, #d4ecbf); color: #2d5218; font-size: 9px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 10px; border-radius: 100px; border: 1px solid #b8d99a; }
+.wallet-hint { font-size: 11px; color: #8aa87a; margin: 0; }
+.wallet-hint a.text-link { color: #5c8042; text-decoration: underline; text-underline-offset: 2px; }
+.wallet-connected-badge { display: flex; align-items: center; gap: 7px; font-size: 11px; color: #4a7a30; background: #edf7e5; border: 1px solid #c5e0a8; border-radius: 8px; padding: 8px 12px; font-family: 'SF Mono','Fira Code',monospace; }
+.wallet-connected-badge .text-mint { color: #4a9a35; }
+.wallet-name-form { display: flex; flex-direction: column; gap: 14px; }
+.wallet-name-form label { display: flex; flex-direction: column; gap: 6px; font-size: 11px; color: #667c57; font-weight: 500; }
+.wallet-name-form input { padding: 10px 14px; border: 1.5px solid #c8ddb5; border-radius: 8px; font-size: 13px; outline: none; transition: border-color 0.15s; background: #fcfff9; }
+.wallet-name-form input:focus { border-color: #5c8042; }
+.wallet-name-form label small { font-size: 10px; color: #a4ba90; }
+.auth-divider { display: flex; align-items: center; gap: 12px; margin: 20px 0 4px; }
+.auth-divider::before, .auth-divider::after { content: ''; flex: 1; height: 1px; background: #dfe8d3; }
+.auth-divider span { font-size: 10px; color: #aabf97; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; }
+.auth-email-toggle { display: flex; align-items: center; gap: 8px; width: 100%; padding: 11px 14px; background: #f5f9f1; border: 1.5px solid #dae8cc; border-radius: 9px; font-size: 12px; color: #5d7a4a; font-weight: 500; cursor: pointer; transition: all 0.15s ease; text-align: left; }
+.auth-email-toggle:hover { background: #eef6e6; border-color: #b8d49a; }
+.email-auth-form { display: flex; flex-direction: column; gap: 14px; padding: 18px; background: #f8fbf4; border: 1.5px solid #dae8cc; border-radius: 10px; margin-top: 6px; animation: slideDown 0.2s ease; }
+@keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+.email-auth-form label { display: flex; flex-direction: column; gap: 5px; font-size: 11px; color: #667c57; font-weight: 500; }
+.email-auth-form input { padding: 9px 13px; border: 1.5px solid #c8ddb5; border-radius: 8px; font-size: 13px; outline: none; transition: border-color 0.15s; background: #fff; }
+.email-auth-form input:focus { border-color: #5c8042; }
+.error-box { display: flex; align-items: flex-start; gap: 8px; }
 .spin {
   animation: spin 1s linear infinite;
 }
