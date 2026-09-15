@@ -3765,6 +3765,7 @@ tr:last-child td {
 .button-wallet:active:not(:disabled) { transform: translateY(0); }
 .button-wallet:disabled { opacity: 0.7; cursor: not-allowed; }
 .button-wallet svg:last-child { margin-left: auto; opacity: 0.7; }
+.badge-warning { display: inline-flex; align-items: center; font-size: 11px; font-weight: 600; color: #8a4b12; background: #fdf0dc; border: 1px solid #f0cd97; border-radius: 8px; padding: 4px 10px; }
 .wallet-badge { display: flex; align-items: center; gap: 8px; }
 .wallet-badge-pill { display: inline-flex; align-items: center; background: linear-gradient(90deg, #e8f5de, #d4ecbf); color: #2d5218; font-size: 9px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 10px; border-radius: 100px; border: 1px solid #b8d99a; }
 .wallet-hint { font-size: 11px; color: #8aa87a; margin: 0; }

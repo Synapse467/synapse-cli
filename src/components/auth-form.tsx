@@ -66,6 +66,34 @@ export function AuthForm({ register = false }: { register?: boolean }) {
   const [emailOpen, setEmailOpen] = useState(false);
   const [pending, setPending] = useState(false);
 
+  // ── Step 2 (defined first so Step 1 can call it): send signature to API ────
+  const verifyAndLogin = useCallback(
+    async (
+      info: { publicKey: string; signedMessage: string; nonce: string },
+      name: string | undefined,
+    ) => {
+      setPending(true);
+      try {
+        await api("/auth/wallet-verify", {
+          method: "POST",
+          body: JSON.stringify({
+            publicKey: info.publicKey,
+            nonce: info.nonce,
+            signedMessage: info.signedMessage,
+            displayName: name,
+          }),
+        });
+        router.push("/studio");
+      } catch (err) {
+        setError((err as Error).message);
+        setWalletStep("idle");
+      } finally {
+        setPending(false);
+      }
+    },
+    [router],
+  );
+
   // ── Step 1: connect wallet, get publicKey + signature ──────────────────────
   const handleWalletConnect = useCallback(async () => {
     setError("");
@@ -84,32 +112,7 @@ export function AuthForm({ register = false }: { register?: boolean }) {
       setError((err as Error).message);
       setWalletStep("idle");
     }
-  }, [register]);
-
-  // ── Step 2: send signature to API ─────────────────────────────────────────
-  const verifyAndLogin = async (
-    info: { publicKey: string; signedMessage: string; nonce: string },
-    name: string | undefined
-  ) => {
-    setPending(true);
-    try {
-      await api("/auth/wallet-verify", {
-        method: "POST",
-        body: JSON.stringify({
-          publicKey: info.publicKey,
-          nonce: info.nonce,
-          signedMessage: info.signedMessage,
-          displayName: name,
-        }),
-      });
-      router.push("/studio");
-    } catch (err) {
-      setError((err as Error).message);
-      setWalletStep("idle");
-    } finally {
-      setPending(false);
-    }
-  };
+  }, [register, verifyAndLogin]);
 
   const handleNameSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -132,7 +135,7 @@ export function AuthForm({ register = false }: { register?: boolean }) {
             <br />
             could change
             <br />
-            <span className="serif">someone's next move.</span>
+            <span className="serif">someone&apos;s next move.</span>
           </h1>
           <p>Give your expertise a place to grow—and a way to reach the people who need it.</p>
           <div className="auth-proof">
@@ -225,7 +228,7 @@ export function AuthForm({ register = false }: { register?: boolean }) {
 
             {!walletInfo && walletStep === "idle" && (
               <p className="wallet-hint">
-                Don't have Freighter?{" "}
+                Don&apos;t have Freighter?{" "}
                 <a
                   href="https://freighter.app"
                   target="_blank"

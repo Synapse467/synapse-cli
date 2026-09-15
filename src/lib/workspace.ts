@@ -24,6 +24,7 @@ export type Source = {
   type: string;
   text: string;
   contributor: string;
+  status: "PENDING" | "PROCESSED" | "FLAGGED";
   createdAt: string;
 };
 export type Capsule = {
@@ -244,6 +245,7 @@ export function seedWorkspace(): Workspace {
         type: "INTERVIEW",
         text: approved.map((k) => k.text).join("\n"),
         contributor: "Alex Jordan",
+        status: "PROCESSED",
         createdAt: now(),
       },
     ],
@@ -327,6 +329,7 @@ export function applyDemoAction(
       type: String(d.type || "NOTE"),
       text,
       contributor: w.profile.name,
+      status: "PROCESSED",
       createdAt: now(),
     };
     w.sources.unshift(source);

@@ -34,6 +34,7 @@ import {
   RotateCcw,
   Clock,
   CheckCircle2,
+  Sparkles,
 } from "lucide-react";
 import { Brand } from "./brand";
 import {GoldenCases} from './golden-cases';
@@ -1025,7 +1026,13 @@ function Sources({
                   <td>{s.contributor}</td>
                   <td>{date(s.createdAt)}</td>
                   <td>
-                    {w.knowledge.filter((k) => k.sourceId === s.id).length}
+                    {s.status === "FLAGGED" ? (
+                      <span className="badge badge-warning">
+                        Flagged by security scan — not extracted
+                      </span>
+                    ) : (
+                      w.knowledge.filter((k) => k.sourceId === s.id).length
+                    )}
                   </td>
                   <td>
                     <button
@@ -1601,6 +1608,7 @@ function Evaluations({
   demo: boolean;
 }) {
   const [busy, setBusy] = useState(false);
+  const [genBusy, setGenBusy] = useState(false);
   const [error, setError] = useState("");
   const evaluation = w.evaluations.find((e) => e.capsuleId === capsule.id);
   return (
@@ -1613,6 +1621,28 @@ function Evaluations({
             “I don’t know.”
           </p>
         </div>
+        <button
+          className="button button-outline small"
+          disabled={genBusy}
+          onClick={async () => {
+            setGenBusy(true);
+            setError("");
+            try {
+              await mutate({ type: "generate-evals", capsuleId: capsule.id });
+            } catch (err) {
+              setError((err as Error).message);
+            } finally {
+              setGenBusy(false);
+            }
+          }}
+        >
+          {genBusy ? (
+            <LoaderCircle size={16} className="spin" />
+          ) : (
+            <Sparkles size={16} />
+          )}
+          Suggest cases from approved knowledge
+        </button>
         <button
           className="button button-dark small"
           disabled={busy}
