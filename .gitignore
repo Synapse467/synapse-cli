@@ -1,8 +1,16 @@
-node_modules/
-.next/
-out/
-.env*
-!.env.example
-playwright-report/
-test-results/
-*.tsbuildinfo
+# Secrets and local state never belong in the repository.
+.env
+.env.*
+*.env
+identity.json
+*.seed
+.synapse/
+
+# Build output
+dist/
+target/
+*.exe
+*.wasm
+coverage.out
+.idea/
+.vscode/
