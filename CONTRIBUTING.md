@@ -10,7 +10,7 @@ Thank you for helping. A few things keep Synapse trustworthy.
 
 ## Build and test
 
-Go 1.26 or later. The CLI depends on synapse-core and synapse-engine; clone them beside this repository and use a `go.work` file:
+Go 1.26 or later. The CLI builds on its own from the tagged synapse-core and synapse-engine. To change them together with the CLI, clone them beside it and use a `go.work` file:
 
 ```bash
 go work init ./synapse-cli ./synapse-engine ./synapse-core

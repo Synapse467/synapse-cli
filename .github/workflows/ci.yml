@@ -8,36 +8,27 @@ on:
 permissions:
   contents: read
 
-# Builds the CLI together with the current synapse-engine and synapse-core from main, so it works
-# before releases exist. `standalone.yml` proves it also builds on its own from tagged dependencies.
+# Builds on its own, from the tagged versions of synapse-core and synapse-engine in go.mod.
 jobs:
   test:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
+    env:
+      GOWORK: "off"
     steps:
       - uses: actions/checkout@v4
-        with:
-          path: synapse-cli
-      - uses: actions/checkout@v4
-        with:
-          repository: Synapse467/synapse-engine
-          path: synapse-engine
-      - uses: actions/checkout@v4
-        with:
-          repository: Synapse467/synapse-core
-          path: synapse-core
       - uses: actions/setup-go@v5
         with:
           go-version: "1.26"
-      - run: go work init ./synapse-core ./synapse-engine ./synapse-cli
       - name: Format
         if: matrix.os == 'ubuntu-latest'
-        run: test -z "$(gofmt -l synapse-cli)"
-      - run: go vet ./synapse-cli/...
-      - run: go test ./synapse-cli/...
+        run: test -z "$(gofmt -l .)"
+      - run: go mod verify
+      - run: go vet ./...
+      - run: go test ./...
       - name: The demo runs with nothing set up
-        run: go run ./synapse-cli/cmd/synapse demo
+        run: go run ./cmd/synapse demo
         env:
           SYNAPSE_HOME: ${{ runner.temp }}/synapse-home
