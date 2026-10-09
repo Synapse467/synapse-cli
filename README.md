@@ -1,4 +1,29 @@
-# synapse-cli
+<p align="center"><img src="assets/logo.svg" alt="Synapse logo" width="112"></p>
+
+<h1 align="center">synapse-cli</h1>
+
+<p align="center"><b>The synapse command: publish, verify, ask, license and serve expertise with no account.</b></p>
+
+<p align="center">
+  <a href="https://github.com/Synapse467/synapse-cli/actions/workflows/ci.yml"><img src="https://github.com/Synapse467/synapse-cli/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/Synapse467/synapse-cli/blob/main/LICENSE"><img src="https://img.shields.io/github/license/Synapse467/synapse-cli?color=blue" alt="License: MIT"></a>
+  <a href="https://github.com/Synapse467/synapse-cli/releases"><img src="https://img.shields.io/github/v/release/Synapse467/synapse-cli?color=brightgreen" alt="Latest release"></a>
+  <img src="https://img.shields.io/github/go-mod/go-version/Synapse467/synapse-cli?color=00ADD8" alt="Go version">
+  <a href="https://github.com/Synapse467/synapse-cli/issues"><img src="https://img.shields.io/github/issues/Synapse467/synapse-cli?color=orange" alt="Open issues"></a>
+  <a href="https://github.com/Synapse467/synapse-cli/issues?q=is%3Aopen+label%3A%22help+wanted%22"><img src="https://img.shields.io/badge/help%20wanted-welcome-8A2BE2" alt="Help wanted"></a>
+  <img src="https://img.shields.io/badge/built%20for-Stellar-black" alt="Built for Stellar">
+</p>
+
+<p align="center">
+  <a href="https://cjay-1.gitbook.io/synapse-docs/">Documentation</a> ·
+  <a href="https://github.com/Synapse467/synapse-cli/releases">Releases</a> ·
+  <a href="https://github.com/Synapse467/synapse-cli/issues">Issues</a> ·
+  <a href="CONTRIBUTING.md">Contributing</a> ·
+  <a href="SECURITY.md">Security</a>
+</p>
+
+---
+
 
 The `synapse` command: turn what an expert knows into a signed, tested, licensable file, and let people, programs and AI agents use it.
 
@@ -193,3 +218,17 @@ Set `SYNAPSE_HOME` to move your Synapse folder. That is the only environment var
 [`docs/licensing.md`](docs/licensing.md) · [`docs/gateway.md`](docs/gateway.md) · [`docs/mcp.md`](docs/mcp.md) · [`docs/stellar.md`](docs/stellar.md) · [`docs/faq.md`](docs/faq.md)
 
 MIT licensed. See [`../REPOSITORIES.md`](https://github.com/Synapse467/synapse-core/blob/main/docs/REPOSITORIES.md) for how the four repositories fit together.
+
+## Maintainers
+
+| Maintainer | Role | Contact |
+| --- | --- | --- |
+| [Synapse467](https://github.com/Synapse467) | Organization owner, releases | [GitHub issues](https://github.com/Synapse467/synapse-cli/issues) |
+
+## Community
+
+Ask questions and propose changes in [GitHub issues](https://github.com/Synapse467/synapse-cli/issues). Read the [documentation](https://cjay-1.gitbook.io/synapse-docs/) first; the [FAQ](https://cjay-1.gitbook.io/synapse-docs/project/faq) answers the common questions.
+
+## Contributors
+
+<a href="https://github.com/Synapse467/synapse-cli/graphs/contributors"><img src="https://contrib.rocks/image?repo=Synapse467/synapse-cli" alt="Contributors"></a>
